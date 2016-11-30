@@ -14,6 +14,7 @@
 <string name="invalid_form_id">Invalid form_id: %1$s (form name: %2$s).</string>
 <!-- start pre restructuring -->
 <string name="accept_location">Record Location</string>
+<string name="reset_location">Clear</string>
 <string name="activity_not_found">No activity found to handle: %s</string>
 <string name="app_name">ODK Survey</string>
 <string name="cancel">Cancel</string>

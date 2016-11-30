@@ -128,6 +128,9 @@ public class GeoPointActivity extends BaseActivity implements LocationListener {
           returnLocation();
           break;
         case DialogInterface.BUTTON_NEGATIVE:
+          resetLocation();
+          break;
+        case DialogInterface.BUTTON_NEUTRAL:
           mLocation = null;
           finish();
           break;
@@ -143,7 +146,9 @@ public class GeoPointActivity extends BaseActivity implements LocationListener {
     mLocationDialog.setMessage(getString(R.string.please_wait_long));
     mLocationDialog.setButton(DialogInterface.BUTTON_POSITIVE, getString(R.string.accept_location),
         geopointButtonListener);
-    mLocationDialog.setButton(DialogInterface.BUTTON_NEGATIVE, getString(R.string.cancel_location),
+    mLocationDialog.setButton(DialogInterface.BUTTON_NEUTRAL, getString(R.string.cancel_location),
+        geopointButtonListener);
+    mLocationDialog.setButton(DialogInterface.BUTTON_NEGATIVE, getString(R.string.reset_location),
         geopointButtonListener);
   }
 
@@ -156,6 +161,16 @@ public class GeoPointActivity extends BaseActivity implements LocationListener {
       i.putExtra(MainMenuActivity.LOCATION_ACCURACY_RESULT, Double.valueOf(mLocation.getAccuracy()));
       setResult(RESULT_OK, i);
     }
+    finish();
+  }
+
+  private void resetLocation() {
+    Intent i = new Intent();
+    i.putExtra(MainMenuActivity.LOCATION_LATITUDE_RESULT, i.getDoubleArrayExtra(MainMenuActivity.LOCATION_LATITUDE_RESULT));
+    i.putExtra(MainMenuActivity.LOCATION_LONGITUDE_RESULT, i.getDoubleArrayExtra(MainMenuActivity.LOCATION_LONGITUDE_RESULT));
+    i.putExtra(MainMenuActivity.LOCATION_ALTITUDE_RESULT, i.getDoubleArrayExtra(MainMenuActivity.LOCATION_ALTITUDE_RESULT));
+    i.putExtra(MainMenuActivity.LOCATION_ACCURACY_RESULT, i.getDoubleArrayExtra(MainMenuActivity.LOCATION_ACCURACY_RESULT));
+    setResult(RESULT_OK, i);
     finish();
   }
 
@@ -192,7 +207,7 @@ public class GeoPointActivity extends BaseActivity implements LocationListener {
     switch (status) {
     case LocationProvider.AVAILABLE:
       if (mLocation != null) {
-        mLocationDialog.setMessage(getString(R.string.location_accuracy, mLocation.getAccuracy()));
+        mLocationDialog.setMessage(getString(R.string.location_accuracy, String.valueOf(mLocation.getAccuracy())));
       }
       break;
     case LocationProvider.OUT_OF_SERVICE:

@@ -12,6 +12,7 @@
 	-->
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
 <string name="accept_location">Record Location</string>
+<string name="reset_location">Clear</string>
 <string name="activity_not_found">No activity found to handle: %s</string>
 <string name="app_name">ODK Survey</string>
 <string name="cancel">Cancel</string>
