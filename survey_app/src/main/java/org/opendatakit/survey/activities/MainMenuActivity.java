@@ -51,6 +51,7 @@ import org.opendatakit.properties.PropertiesSingleton;
 import org.opendatakit.properties.PropertyManager;
 import org.opendatakit.provider.FormsColumns;
 import org.opendatakit.provider.FormsProviderAPI;
+import org.opendatakit.survey.fragments.FrontPageFragment;
 import org.opendatakit.webkitserver.utilities.SerializationUtils;
 import org.opendatakit.webkitserver.utilities.SerializationUtils.MacroStringExpander;
 import org.opendatakit.utilities.ODKFileUtils;
@@ -87,12 +88,12 @@ import java.util.UUID;
  *
  * @author mitchellsundt@gmail.com
  */
-public class MainMenuActivity extends BaseActivity implements IOdkSurveyActivity {
+public class MainMenuActivity extends BaseActivity implements IOdkSurveyActivity, FrontPageFragment.OnFragmentInteractionListener{
 
   private static final String t = "MainMenuActivity";
 
   public static enum ScreenList {
-    MAIN_SCREEN, FORM_CHOOSER, WEBKIT, INITIALIZATION_DIALOG, ABOUT_MENU
+    MAIN_SCREEN, FORM_CHOOSER, WEBKIT, INITIALIZATION_DIALOG, ABOUT_MENU, FRONT_PAGE
   };
 
   // Extra returned from gp activity
@@ -125,18 +126,14 @@ public class MainMenuActivity extends BaseActivity implements IOdkSurveyActivity
 
   // menu options
 
-  private static final int MENU_FILL_FORM = Menu.FIRST;
-  private static final int MENU_CLOUD_FORMS = Menu.FIRST + 1;
-  private static final int MENU_PREFERENCES = Menu.FIRST + 2;
-  private static final int MENU_EDIT_INSTANCE = Menu.FIRST + 3;
-  private static final int MENU_ABOUT = Menu.FIRST + 4;
+  private static final int MENU_CLOUD_FORMS = Menu.FIRST ;
+  private static final int MENU_ABOUT = Menu.FIRST + 1;
 
   // activity callback codes
   private static final int HANDLER_ACTIVITY_CODE = 20;
   private static final int INTERNAL_ACTIVITY_CODE = 21;
   private static final int SYNC_ACTIVITY_CODE = 22;
   private static final int CONFLICT_ACTIVITY_CODE = 23;
-  private static final int APP_PROPERTIES_ACTIVITY_CODE = 24;
 
   private static final String BACKPRESS_DIALOG_TAG = "backPressDialog";
 
@@ -204,7 +201,7 @@ public class MainMenuActivity extends BaseActivity implements IOdkSurveyActivity
    * Member variables that are saved and restored across orientation changes.
    */
 
-  private ScreenList currentFragment = ScreenList.FORM_CHOOSER;
+  private ScreenList currentFragment = ScreenList.FRONT_PAGE;
 
   private String dispatchStringWaitingForData = null;
   private String actionWaitingForData = null;
@@ -832,18 +829,14 @@ public class MainMenuActivity extends BaseActivity implements IOdkSurveyActivity
     MenuItem item;
     if (currentFragment != ScreenList.WEBKIT) {
       ActionBar actionBar = getActionBar();
+      actionBar.setCustomView(R.layout.action_bar);
+      actionBar.setDisplayShowCustomEnabled(true);
       actionBar.show();
 
-      item = menu.add(Menu.NONE, MENU_FILL_FORM, Menu.NONE, getString(R.string.enter_data_button));
-      item.setIcon(R.drawable.ic_action_collections_collection).setShowAsAction(showOption);
+      item = menu.add(Menu.NONE, MENU_CLOUD_FORMS, Menu.NONE, R.string.sync);
+      item.setIcon(R.drawable.ic_cached_black_24dp).setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER);
 
-      item = menu.add(Menu.NONE, MENU_CLOUD_FORMS, Menu.NONE, getString(R.string.get_forms));
-      item.setIcon(R.drawable.ic_cached_black_24dp).setShowAsAction(showOption);
-
-      item = menu.add(Menu.NONE, MENU_PREFERENCES, Menu.NONE, getString(R.string.general_preferences));
-      item.setIcon(R.drawable.ic_settings_black_24dp).setShowAsAction(showOption);
-
-      item = menu.add(Menu.NONE, MENU_ABOUT, Menu.NONE, getString(R.string.about));
+      item = menu.add(Menu.NONE, MENU_ABOUT, Menu.NONE, R.string.about);
       item.setIcon(R.drawable.ic_info_outline_black_24dp).setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER);
     } else {
       ActionBar actionBar = getActionBar();
@@ -856,10 +849,7 @@ public class MainMenuActivity extends BaseActivity implements IOdkSurveyActivity
   @Override
   public boolean onOptionsItemSelected(MenuItem item) {
 
-    if (item.getItemId() == MENU_FILL_FORM) {
-      swapToFragmentView(ScreenList.FORM_CHOOSER);
-      return true;
-    } else if (item.getItemId() == MENU_CLOUD_FORMS) {
+    if (item.getItemId() == MENU_CLOUD_FORMS) {
       try {
         Intent syncIntent = new Intent();
         syncIntent.setComponent(new ComponentName(
@@ -869,25 +859,11 @@ public class MainMenuActivity extends BaseActivity implements IOdkSurveyActivity
         Bundle bundle = new Bundle();
         bundle.putString(IntentConsts.INTENT_KEY_APP_NAME, appName);
         syncIntent.putExtras(bundle);
-        this.startActivityForResult(syncIntent, SYNC_ACTIVITY_CODE);
+        this.startActivity(syncIntent);
       } catch (ActivityNotFoundException e) {
         WebLogger.getLogger(getAppName()).printStackTrace(e);
         Toast.makeText(this, R.string.sync_not_found, Toast.LENGTH_LONG).show();
       }
-      return true;
-    } else if (item.getItemId() == MENU_EDIT_INSTANCE) {
-      swapToFragmentView(ScreenList.WEBKIT);
-      return true;
-    } else if (item.getItemId() == MENU_PREFERENCES) {
-      // launch the intent in Services
-      Intent preferenceIntent = new Intent();
-      preferenceIntent.setComponent(new ComponentName(IntentConsts.AppProperties.APPLICATION_NAME,
-          IntentConsts.AppProperties.ACTIVITY_NAME));
-      preferenceIntent.setAction(Intent.ACTION_DEFAULT);
-      Bundle bundle = new Bundle();
-      bundle.putString(IntentConsts.INTENT_KEY_APP_NAME, appName);
-      preferenceIntent.putExtras(bundle);
-      this.startActivityForResult(preferenceIntent, APP_PROPERTIES_ACTIVITY_CODE);
       return true;
     } else if (item.getItemId() == MENU_ABOUT) {
       swapToFragmentView(ScreenList.ABOUT_MENU);
@@ -1086,6 +1062,11 @@ public class MainMenuActivity extends BaseActivity implements IOdkSurveyActivity
       if (newFragment == null) {
         newFragment = new FormChooserListFragment();
       }
+    } else if (newScreenType == ScreenList.FRONT_PAGE) {
+      newFragment = mgr.findFragmentByTag(newScreenType.name());
+      if (newFragment == null) {
+        newFragment = new FrontPageFragment();
+      }
     } else if (newScreenType == ScreenList.INITIALIZATION_DIALOG) {
       newFragment = mgr.findFragmentByTag(newScreenType.name());
       if (newFragment == null) {
@@ -1178,7 +1159,7 @@ public class MainMenuActivity extends BaseActivity implements IOdkSurveyActivity
                     Uri.withAppendedPath(FormsProviderAPI.CONTENT_URI, appName),
                       tableId), formId);
           } else {
-            swapToFragmentView(ScreenList.FORM_CHOOSER);
+            swapToFragmentView(ScreenList.FRONT_PAGE);
             createErrorDialog(
                 getString(R.string.invalid_uri_expecting_n_segments, uri.toString(), 2), EXIT);
             return;
@@ -1187,7 +1168,7 @@ public class MainMenuActivity extends BaseActivity implements IOdkSurveyActivity
           FormIdStruct newForm = FormIdStruct.retrieveFormIdStruct(getContentResolver(), formUri);
           if (newForm == null) {
             // error
-            swapToFragmentView(ScreenList.FORM_CHOOSER);
+            swapToFragmentView(ScreenList.FRONT_PAGE);
             createErrorDialog(getString(R.string.form_not_found, segments.get(1)), EXIT);
             return;
           } else {
@@ -1726,7 +1707,11 @@ public class MainMenuActivity extends BaseActivity implements IOdkSurveyActivity
       }
     } else if (requestCode == SYNC_ACTIVITY_CODE) {
       ((Survey) getApplication()).setRunInitializationTask(getAppName());
-      this.swapToFragmentView((currentFragment == null) ? ScreenList.FORM_CHOOSER : currentFragment);
+      this.swapToFragmentView((currentFragment == null) ? ScreenList.FRONT_PAGE : currentFragment);
     }
+  }
+
+  public void onFragmentInteraction(ScreenList screen){
+    swapToFragmentView(screen);
   }
 }

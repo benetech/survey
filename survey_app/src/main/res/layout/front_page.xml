@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+    <GridLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:grid="http://schemas.android.com/apk/res-auto"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:columnCount="2"
+        android:rowCount="2">
+
+        <FrameLayout
+            android:layout_columnWeight="1"
+            android:layout_rowWeight="1"
+            android:gravity="center"
+            android:layout_gravity="fill"
+            android:layout_margin="5dp">
+            <Button
+                android:text="@string/new_survey"
+                android:layout_width="150dip"
+                android:layout_height="150dip"
+                android:layout_gravity="right|bottom"
+                android:id="@+id/new_survey_btn" />
+        </FrameLayout>
+        <FrameLayout
+            android:layout_columnWeight="1"
+            android:layout_rowWeight="1"
+            android:gravity="center"
+            android:layout_gravity="fill"
+            android:layout_margin="5dp">
+            <Button
+                android:text="@string/surveys_in_progress"
+                android:layout_width="150dip"
+                android:layout_height="150dip"
+                android:layout_gravity="left|bottom"
+                android:id="@+id/in_progress_btn" />
+        </FrameLayout>
+        <FrameLayout
+            android:layout_columnWeight="1"
+            android:layout_rowWeight="1"
+            android:gravity="center"
+            android:layout_gravity="fill"
+            android:layout_margin="5dp">
+            <Button
+                android:text="@string/submitted_surveys"
+                android:layout_width="150dip"
+                android:layout_height="150dip"
+                android:layout_gravity="right|top"
+                android:id="@+id/submitted_btn" />
+        </FrameLayout>
+        <FrameLayout
+            android:layout_columnWeight="1"
+            android:layout_rowWeight="1"
+            android:gravity="center"
+            android:layout_gravity="fill"
+            android:layout_margin="5dp">
+            <Button
+                android:text="@string/settings"
+                android:layout_width="150dip"
+                android:layout_height="150dip"
+                android:layout_gravity="left|top"
+                android:id="@+id/settings_btn" />
+        </FrameLayout>
+    </GridLayout>
