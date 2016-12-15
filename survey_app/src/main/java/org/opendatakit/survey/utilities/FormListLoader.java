@@ -75,7 +75,8 @@ public class FormListLoader extends AsyncTaskLoader<ArrayList<FormInfo>> {
               formVersion,
               LocalizationUtils.getLocalizedDisplayName(formTitle),
               formatter.format(lastModificationDate));
-          forms.add(info);
+          if(!c.getString(idxFormVersion).contains("sub"))
+            forms.add(info);
         } while ( c.moveToNext());
       }
     } finally {
