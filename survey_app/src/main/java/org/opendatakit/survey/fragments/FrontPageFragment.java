@@ -13,6 +13,7 @@ import android.widget.Button;
 
 import org.opendatakit.consts.IntentConsts;
 import org.opendatakit.survey.R;
+import org.opendatakit.survey.activities.IOdkSurveyActivity;
 import org.opendatakit.survey.activities.MainMenuActivity;
 
 
@@ -38,6 +39,10 @@ public class FrontPageFragment extends Fragment implements Button.OnClickListene
                                        Bundle savedInstanceState) {
         View view = inflater.inflate(ID, container, false);
         send = (Button) view.findViewById(R.id.new_survey_btn);
+        send.setOnClickListener(this);
+        send = (Button) view.findViewById(R.id.submitted_btn);
+        send.setOnClickListener(this);
+        send = (Button) view.findViewById(R.id.in_progress_btn);
         send.setOnClickListener(this);
         send = (Button) view.findViewById(R.id.settings_btn);
         send.setOnClickListener(this);
@@ -67,12 +72,22 @@ public class FrontPageFragment extends Fragment implements Button.OnClickListene
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.new_survey_btn:
+                ((IOdkSurveyActivity) getActivity()).setSyncStateQueryValue(null);
+                mListener.onFragmentInteraction(MainMenuActivity.ScreenList.FORM_CHOOSER);
+                break;
+            case R.id.in_progress_btn:
+                ((IOdkSurveyActivity) getActivity()).setSyncStateQueryValue("new row");
+                mListener.onFragmentInteraction(MainMenuActivity.ScreenList.FORM_CHOOSER);
+                break;
+            case R.id.submitted_btn:
+                ((IOdkSurveyActivity) getActivity()).setSyncStateQueryValue("synced");
                 mListener.onFragmentInteraction(MainMenuActivity.ScreenList.FORM_CHOOSER);
                 break;
             case R.id.settings_btn:
                 launchServicesSettings();
                 break;
             default:
+                ((IOdkSurveyActivity) getActivity()).setSyncStateQueryValue(null);
                 mListener.onFragmentInteraction(MainMenuActivity.ScreenList.FORM_CHOOSER);
                 break;
         }

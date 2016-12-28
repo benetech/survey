@@ -75,4 +75,8 @@ public interface IOdkSurveyActivity extends IOdkCommonActivity, IOdkDataActivity
 
   // trigger resolve...
   public void resolveAllCheckpointsThenPopBackStack();
+
+  public void setSyncStateQueryValue(String value);
+
+  public String getSyncStateQueryValue();
 }

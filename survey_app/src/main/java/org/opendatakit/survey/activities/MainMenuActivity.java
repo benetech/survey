@@ -228,6 +228,8 @@ public class MainMenuActivity extends BaseActivity implements IOdkSurveyActivity
   private String trackingFormPath = null;
   private Long trackingFormLastModifiedDate = 0L;
 
+  private String syncStateQueryValue = null;
+
   /**
    * track which tables have conflicts (these need to be resolved before Survey
    * can operate)
@@ -619,6 +621,12 @@ public class MainMenuActivity extends BaseActivity implements IOdkSurveyActivity
               + StringEscapeUtils.escapeHtml4(getScreenPath()))
           + ("&refId=" + StringEscapeUtils.escapeHtml4(refId))
           + ((auxillaryHash == null) ? "" : "&" + auxillaryHash);
+      if(syncStateQueryValue!=null) {
+        if (syncStateQueryValue.equals("new row"))
+          hashUrl += "&_sync_state=\"new_row\"";
+        else if (syncStateQueryValue.equals("synced"))
+          hashUrl += "&_sync_state=\"synced\"";
+      }
 
       return hashUrl;
     }
@@ -646,7 +654,7 @@ public class MainMenuActivity extends BaseActivity implements IOdkSurveyActivity
     super.onCreate(savedInstanceState);
 
     // android.os.Debug.waitForDebugger();
-
+    syncStateQueryValue=getIntentExtras().getString("_sync_state");
     try {
       // ensure that we have a BackgroundTaskFragment...
       // create it programmatically because if we place it in the
@@ -659,7 +667,6 @@ public class MainMenuActivity extends BaseActivity implements IOdkSurveyActivity
       setAppName(ODKFileUtils.getOdkDefaultAppName());
       Uri uri = getIntent().getData();
       Uri formUri = null;
-
       if (uri != null) {
         // initialize to the URI, then we will customize further based upon the
         // savedInstanceState...
@@ -875,6 +882,7 @@ public class MainMenuActivity extends BaseActivity implements IOdkSurveyActivity
   @Override
   public void chooseForm(Uri formUri) {
     Intent i = new Intent(Intent.ACTION_EDIT, formUri, this, MainMenuActivity.class);
+    i.putExtra("_sync_state",syncStateQueryValue);
     startActivityForResult(i, INTERNAL_ACTIVITY_CODE);
   }
 
@@ -1713,5 +1721,15 @@ public class MainMenuActivity extends BaseActivity implements IOdkSurveyActivity
 
   public void onFragmentInteraction(ScreenList screen){
     swapToFragmentView(screen);
+  }
+
+  @Override
+  public String getSyncStateQueryValue(){
+    return this.syncStateQueryValue;
+  }
+
+  @Override
+  public void setSyncStateQueryValue(String value){
+    this.syncStateQueryValue=value;
   }
 }
