@@ -866,7 +866,7 @@ public class MainMenuActivity extends BaseActivity implements IOdkSurveyActivity
         Bundle bundle = new Bundle();
         bundle.putString(IntentConsts.INTENT_KEY_APP_NAME, appName);
         syncIntent.putExtras(bundle);
-        this.startActivity(syncIntent);
+        this.startActivityForResult(syncIntent, SYNC_ACTIVITY_CODE);
       } catch (ActivityNotFoundException e) {
         WebLogger.getLogger(getAppName()).printStackTrace(e);
         Toast.makeText(this, R.string.sync_not_found, Toast.LENGTH_LONG).show();
