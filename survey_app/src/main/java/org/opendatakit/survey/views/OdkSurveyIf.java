@@ -201,7 +201,7 @@ public class OdkSurveyIf {
  }
 
   @JavascriptInterface
-  public void showToast(String ids) {
+  public void syncSelectedForms(String ids) {
     Gson g = new Gson();
     Type listType = new TypeToken<ArrayList<String>>() {
     }.getType();
