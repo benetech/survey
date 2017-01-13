@@ -14,7 +14,22 @@
 
 package org.opendatakit.survey.views;
 
+import android.content.ComponentName;
+import android.content.Context;
+import android.content.Intent;
+import android.os.Bundle;
+import android.webkit.JavascriptInterface;
+import android.widget.Toast;
+
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+
+import org.opendatakit.consts.IntentConsts;
+import org.opendatakit.utilities.ODKFileUtils;
+
 import java.lang.ref.WeakReference;
+import java.lang.reflect.Type;
+import java.util.ArrayList;
 
 /**
  * The class mapped to 'odkSurvey' in the Javascript
@@ -23,13 +38,14 @@ import java.lang.ref.WeakReference;
  *
  */
 public class OdkSurveyIf {
-
+  Context mContext;
   public static final String t = "OdkSurveyIf";
 
   private WeakReference<OdkSurvey> weakSurvey;
 
-  OdkSurveyIf(OdkSurvey odkData) {
+  OdkSurveyIf(OdkSurvey odkData, Context c) {
     weakSurvey = new WeakReference<OdkSurvey>(odkData);
+    mContext=c;
   }
 
   private boolean isInactive() {
@@ -183,4 +199,26 @@ public class OdkSurveyIf {
     if (isInactive()) return;
     weakSurvey.get().saveAllChangesFailed(refId, instanceId);
  }
+
+  @JavascriptInterface
+  public void showToast(String ids) {
+    Gson g = new Gson();
+    Type listType = new TypeToken<ArrayList<String>>() {
+    }.getType();
+    ArrayList<String> list = g.fromJson(ids, listType);
+    if (list.isEmpty()) {
+      Toast.makeText(mContext, "You didn't select any forms", Toast.LENGTH_SHORT).show();
+    } else {
+      Intent syncIntent = new Intent();
+      syncIntent.setComponent(new ComponentName(
+              IntentConsts.Sync.APPLICATION_NAME,
+              IntentConsts.Sync.ACTIVITY_NAME));
+      syncIntent.setAction(Intent.ACTION_DEFAULT);
+      Bundle bundle = new Bundle();
+      bundle.putString(IntentConsts.INTENT_KEY_APP_NAME, ODKFileUtils.getOdkDefaultAppName());
+      syncIntent.putStringArrayListExtra("ids", list);
+      syncIntent.putExtras(bundle);
+      mContext.startActivity(syncIntent);
+    }
+  }
 }

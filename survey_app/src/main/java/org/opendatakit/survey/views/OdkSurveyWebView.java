@@ -19,7 +19,7 @@ public class OdkSurveyWebView extends ODKWebView {
     super(context, attrs);
 
     // stomp on the odkSurvey object...
-    odkSurvey = new OdkSurvey((IOdkSurveyActivity) context, this);
+    odkSurvey = new OdkSurvey((IOdkSurveyActivity) context, this, context);
     addJavascriptInterface(odkSurvey.getJavascriptInterfaceWithWeakReference(), "odkSurvey");
   }
 

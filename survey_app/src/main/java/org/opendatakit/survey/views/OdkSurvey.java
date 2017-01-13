@@ -14,6 +14,7 @@
 
 package org.opendatakit.survey.views;
 
+import android.content.Context;
 import org.opendatakit.logging.WebLogger;
 import org.opendatakit.logging.WebLoggerIf;
 import org.opendatakit.survey.activities.IOdkSurveyActivity;
@@ -29,15 +30,16 @@ import java.lang.ref.WeakReference;
 public class OdkSurvey {
 
   public static final String t = "OdkSurvey";
-
+  Context mContext;
   private WeakReference<OdkSurveyWebView> mWebView;
   private IOdkSurveyActivity mActivity;
   private final WebLoggerIf log;
 
-  public OdkSurvey(IOdkSurveyActivity activity, OdkSurveyWebView webView) {
+  public OdkSurvey(IOdkSurveyActivity activity, OdkSurveyWebView webView,Context c) {
     mWebView = new WeakReference<OdkSurveyWebView>(webView);
     mActivity = activity;
     log = WebLogger.getLogger(mActivity.getAppName());
+    mContext=c;
   }
 
   public boolean isInactive() {
@@ -46,7 +48,7 @@ public class OdkSurvey {
 
 
   public OdkSurveyIf getJavascriptInterfaceWithWeakReference() {
-    return new OdkSurveyIf(this);
+    return new OdkSurveyIf(this, mContext);
   }
 
   public void clearAuxillaryHash() {
