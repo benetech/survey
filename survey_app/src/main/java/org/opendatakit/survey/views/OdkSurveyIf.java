@@ -221,4 +221,9 @@ public class OdkSurveyIf {
       mContext.startActivity(syncIntent);
     }
   }
+
+  @JavascriptInterface
+  public String getSubmenuPage() {
+    return weakSurvey.get().getSubmenuPage();
+  }
 }

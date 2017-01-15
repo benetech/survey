@@ -72,22 +72,22 @@ public class FrontPageFragment extends Fragment implements Button.OnClickListene
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.new_survey_btn:
-                ((IOdkSurveyActivity) getActivity()).setSyncStateQueryValue(null);
+                ((IOdkSurveyActivity) getActivity()).setSubmenuPage("new_survey");
                 mListener.onFragmentInteraction(MainMenuActivity.ScreenList.FORM_CHOOSER);
                 break;
             case R.id.in_progress_btn:
-                ((IOdkSurveyActivity) getActivity()).setSyncStateQueryValue("new row");
+                ((IOdkSurveyActivity) getActivity()).setSubmenuPage("new_row");
                 mListener.onFragmentInteraction(MainMenuActivity.ScreenList.FORM_CHOOSER);
                 break;
             case R.id.submitted_btn:
-                ((IOdkSurveyActivity) getActivity()).setSyncStateQueryValue("synced");
+                ((IOdkSurveyActivity) getActivity()).setSubmenuPage("synced");
                 mListener.onFragmentInteraction(MainMenuActivity.ScreenList.FORM_CHOOSER);
                 break;
             case R.id.settings_btn:
                 launchServicesSettings();
                 break;
             default:
-                ((IOdkSurveyActivity) getActivity()).setSyncStateQueryValue(null);
+                ((IOdkSurveyActivity) getActivity()).setSubmenuPage(null);
                 mListener.onFragmentInteraction(MainMenuActivity.ScreenList.FORM_CHOOSER);
                 break;
         }

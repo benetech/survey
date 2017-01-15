@@ -220,4 +220,8 @@ public class OdkSurvey {
     log.d("odkSurvey", "DO: saveAllChangesFailed(" + refId + ", " + instanceId + ")");
     mActivity.saveAllChangesFailed(instanceId);
   }
+
+  public String getSubmenuPage(){
+    return mActivity.getSubmenuPage();
+  }
 }
