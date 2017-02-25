@@ -37,17 +37,21 @@ public class TableIdFormIdVersionListAdapter extends BaseAdapter {
   private final int mFormDisplayNameId;
   private final int mFormLastUpdateDateId;
   private final int mTableIdFormVersionId;
+  private final int mFormCounterId;
   private final ArrayList<FormInfo> mItems = new ArrayList<FormInfo>();
+  private boolean showCounter;
 
   private static final String TAG = TableIdFormIdVersionListAdapter.class.getSimpleName();
 
-  public TableIdFormIdVersionListAdapter(Context context, int layout, int form_display_name_id,
-      int form_last_update_date_id, int form_version_id) {
+  public TableIdFormIdVersionListAdapter(Context context, boolean showCounter, int layout, int form_display_name_id,
+      int form_last_update_date_id, int form_version_id, int form_counter_id) {
     this.mContext = context;
     this.mLayout = layout;
     this.mFormDisplayNameId = form_display_name_id;
     this.mFormLastUpdateDateId = form_last_update_date_id;
     this.mTableIdFormVersionId = form_version_id;
+    this.mFormCounterId = form_counter_id;
+    this.showCounter = showCounter;
   }
 
   public void clear() {
@@ -98,6 +102,13 @@ public class TableIdFormIdVersionListAdapter extends BaseAdapter {
     }
     TextView formTitleView = (TextView) view.findViewById(mFormDisplayNameId);
     formTitleView.setText(info.formDisplayName);
+
+    TextView formInstancesCounter = (TextView) view.findViewById(mFormCounterId);
+    if (!showCounter) {
+      formInstancesCounter.setVisibility(View.INVISIBLE);
+    } else {
+      formInstancesCounter.setText(Integer.toString(info.instancesCounter));
+    }
 
     if ( mFormLastUpdateDateId != -1) {
       TextView formDateView = (TextView) view.findViewById(mFormLastUpdateDateId);

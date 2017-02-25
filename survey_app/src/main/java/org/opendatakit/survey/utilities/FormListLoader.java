@@ -18,13 +18,19 @@ import android.content.AsyncTaskLoader;
 import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
+
 import org.opendatakit.provider.FormsColumns;
 import org.opendatakit.provider.FormsProviderAPI;
-import org.opendatakit.utilities.LocalizationUtils;
+import org.opendatakit.provider.InstanceProviderAPI;
 import org.opendatakit.survey.R;
+import org.opendatakit.utilities.LocalizationUtils;
 
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.Locale;
 
 /**
  * @author mitchellsundt@gmail.com
@@ -32,11 +38,13 @@ import java.util.*;
 public class FormListLoader extends AsyncTaskLoader<ArrayList<FormInfo>> {
 
   private final String appName;
+  private String submenuPage;
 
 
-  public FormListLoader(Context context, String appName) {
+  public FormListLoader(Context context, String appName, String submenuPage) {
     super(context);
     this.appName = appName;
+    this.submenuPage = submenuPage;
   }
 
   @Override public ArrayList<FormInfo> loadInBackground() {
@@ -68,13 +76,15 @@ public class FormListLoader extends AsyncTaskLoader<ArrayList<FormInfo>> {
           long timestamp = c.getLong(idxLastUpdateDate);
           Date lastModificationDate = new Date(timestamp);
           String formTitle = c.getString(idxFormTitle);
+          int instancesCounter = getFormInstancesCount(c.getString(idxTableId));
 
           FormInfo info = new FormInfo(
               c.getString(idxTableId),
               c.getString(idxFormId),
               formVersion,
               LocalizationUtils.getLocalizedDisplayName(formTitle),
-              formatter.format(lastModificationDate));
+              formatter.format(lastModificationDate),
+              instancesCounter);
           if(!c.getString(idxFormVersion).contains("sub"))
             forms.add(info);
         } while ( c.moveToNext());
@@ -110,6 +120,22 @@ public class FormListLoader extends AsyncTaskLoader<ArrayList<FormInfo>> {
     });
 
     return forms;
+  }
+
+  private int getFormInstancesCount(String formTitle) {
+    Uri formUri = Uri.withAppendedPath(InstanceProviderAPI.CONTENT_URI, appName + "/"
+            + formTitle );
+
+    String[] whereArgs = new String[] {
+            submenuPage
+    };
+    Cursor c = getContext().getContentResolver().query(formUri, null, "_sync_state=?", whereArgs, null);
+    int counter = c.getCount();
+
+    if(c!=null) {
+      c.close();
+    }
+    return counter;
   }
 
   @Override protected void onStartLoading() {

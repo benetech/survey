@@ -18,6 +18,7 @@ import org.opendatakit.activities.IAppAwareActivity;
 import org.opendatakit.provider.FormsProviderAPI;
 import org.opendatakit.survey.R;
 import org.opendatakit.survey.activities.IOdkSurveyActivity;
+import org.opendatakit.survey.activities.MainMenuActivity;
 import org.opendatakit.survey.utilities.FormInfo;
 import org.opendatakit.survey.utilities.FormListLoader;
 
@@ -60,10 +61,16 @@ public class FormChooserListFragment extends ListFragment
 
   @Override public void onActivityCreated(Bundle savedInstanceState) {
     super.onActivityCreated(savedInstanceState);
+    boolean showCounter;
+    if(((MainMenuActivity)getActivity()).getSubmenuPage().equals("new_survey")){
+      showCounter = false;
+    } else {
+      showCounter = true;
+    }
 
     // render total instance view
-    mAdapter = new TableIdFormIdVersionListAdapter(getActivity(), R.layout.two_item, R.id.text1,
-        R.id.text2, R.id.text3);
+    mAdapter = new TableIdFormIdVersionListAdapter(getActivity(), showCounter, R.layout.two_item, R.id.text1,
+        R.id.text2, R.id.text3, R.id.text4);
     setListAdapter(mAdapter);
 
     getLoaderManager().initLoader(FORM_CHOOSER_LIST_LOADER, null, this);
@@ -98,7 +105,7 @@ public class FormChooserListFragment extends ListFragment
   @Override public Loader<ArrayList<FormInfo>> onCreateLoader(int id, Bundle args) {
     // This is called when a new Loader needs to be created. This
     // sample only has one Loader, so we don't care about the ID.
-    return new FormListLoader(getActivity(), ((IAppAwareActivity) getActivity()).getAppName());
+    return new FormListLoader(getActivity(), ((IAppAwareActivity) getActivity()).getAppName(), ((MainMenuActivity)getActivity()).getSubmenuPage());
   }
 
   @Override public void onLoadFinished(Loader<ArrayList<FormInfo>> loader,
