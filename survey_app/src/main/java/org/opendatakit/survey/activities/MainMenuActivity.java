@@ -316,9 +316,6 @@ public class MainMenuActivity extends BaseActivity implements IOdkSurveyActivity
     setCurrentForm(newForm);
     clearSectionScreenState();
     String fragment = uri.getFragment();
-    if(submenuPage.equals("new_survey")){
-      setSectionScreenState("initial/2",null);
-    }
     if (fragment != null && fragment.length() != 0) {
       // and process the fragment to find the instanceId, screenPath and other
       // kv pairs
