@@ -9,6 +9,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
-        android:text="Poverty Stoplight"
+        android:text="@string/poverty_stoplight"
         android:textSize="18sp" />
 </RelativeLayout>

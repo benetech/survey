@@ -25,6 +25,7 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
 import org.opendatakit.consts.IntentConsts;
+import org.opendatakit.survey.R;
 import org.opendatakit.utilities.ODKFileUtils;
 
 import java.lang.ref.WeakReference;
@@ -207,7 +208,7 @@ public class OdkSurveyIf {
     }.getType();
     ArrayList<String> list = g.fromJson(ids, listType);
     if (list.isEmpty()) {
-      Toast.makeText(mContext, "You didn't select any forms", Toast.LENGTH_SHORT).show();
+      Toast.makeText(mContext, R.string.no_forms_selected_for_sync, Toast.LENGTH_SHORT).show();
     } else {
       Intent syncIntent = new Intent();
       syncIntent.setComponent(new ComponentName(

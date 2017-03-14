@@ -105,7 +105,7 @@ public class AndroidShortcuts extends BaseActivity {
     Bitmap formIcon = BitmapFactory.decodeResource(getResources(), R.drawable.snotes_form);
 
     AlertDialog.Builder builder = new AlertDialog.Builder(this);
-    builder.setTitle("Select ODK Shortcut");
+    builder.setTitle(R.string.select_shortcut);
 
     choices.clear();
 
