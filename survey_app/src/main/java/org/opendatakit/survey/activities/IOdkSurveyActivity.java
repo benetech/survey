@@ -80,5 +80,7 @@ public interface IOdkSurveyActivity extends IOdkCommonActivity, IOdkDataActivity
 
   public String getSubmenuPage();
 
+  public void saveFormSubformPair(String formUuid, String subformId, String subformTableName);
+
 }
 

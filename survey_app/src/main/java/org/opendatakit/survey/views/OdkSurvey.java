@@ -224,4 +224,8 @@ public class OdkSurvey {
   public String getSubmenuPage(){
     return mActivity.getSubmenuPage();
   }
+
+  public void saveFormSubformPair(String formUuid, String subformId, String subformTableName) {
+    mActivity.saveFormSubformPair(formUuid, subformId, subformTableName);
+  }
 }

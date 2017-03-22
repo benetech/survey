@@ -227,4 +227,9 @@ public class OdkSurveyIf {
   public String getSubmenuPage() {
     return weakSurvey.get().getSubmenuPage();
   }
+
+  @JavascriptInterface
+  public void saveFormSubformPair(String formUuid, String subformId, String subformTableName){
+    weakSurvey.get().saveFormSubformPair(formUuid, subformId, subformTableName);
+  }
 }

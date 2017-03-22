@@ -24,6 +24,7 @@ import android.app.FragmentManager.BackStackEntry;
 import android.app.FragmentTransaction;
 import android.content.ActivityNotFoundException;
 import android.content.ComponentName;
+import android.content.ContentValues;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
@@ -51,6 +52,7 @@ import org.opendatakit.properties.PropertiesSingleton;
 import org.opendatakit.properties.PropertyManager;
 import org.opendatakit.provider.FormsColumns;
 import org.opendatakit.provider.FormsProviderAPI;
+import org.opendatakit.provider.InstanceProviderAPI;
 import org.opendatakit.survey.fragments.FrontPageFragment;
 import org.opendatakit.webkitserver.utilities.SerializationUtils;
 import org.opendatakit.webkitserver.utilities.SerializationUtils.MacroStringExpander;
@@ -1376,6 +1378,7 @@ public class MainMenuActivity extends BaseActivity implements IOdkSurveyActivity
   }
 
   @Override
+  //czemu mto sie nie wywoluje zawsze skoro powiunnno
   public void saveAllChangesCompleted(String instanceId, final boolean asComplete) {
     Intent result = new Intent();
     result.putExtra("instanceId", instanceId);
@@ -1387,6 +1390,9 @@ public class MainMenuActivity extends BaseActivity implements IOdkSurveyActivity
 
   @Override
   public void saveAllChangesFailed(String instanceId) {
+    String amihere = "duypa";
+    Intent result = new Intent();
+    result.putExtra("instanceId", instanceId);
     // should we message anything?
   }
 
@@ -1722,6 +1728,20 @@ public class MainMenuActivity extends BaseActivity implements IOdkSurveyActivity
   }
 
   public void setSubmenuPage(String value){
-    this.submenuPage =value;
+    this.submenuPage = value;
+  }
+
+  @Override
+  public void saveFormSubformPair(String formUuid, String subformId, String subformTableName){
+    Toast.makeText(this, formUuid + " " + subformId + " " + subformTableName, Toast.LENGTH_LONG).show();
+    ContentValues values = new ContentValues();
+    values.put("form_uuid", "formUuid");
+    values.put("subform_id", "subformId");
+    values.put("subform_table_id", "subformTableName");
+    Uri uri = Uri.withAppendedPath(FormsProviderAPI.CONTENT_URI, getAppName() + "/"
+            + "L_form_subform_pairs" );
+    getContentResolver().insert(uri, values);
+    //getContentResolver().update(uri, values, "", new String[]{});
+
   }
 }
