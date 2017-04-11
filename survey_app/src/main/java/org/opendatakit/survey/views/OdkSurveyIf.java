@@ -31,6 +31,7 @@ import org.opendatakit.utilities.ODKFileUtils;
 import java.lang.ref.WeakReference;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.Map;
 
 /**
  * The class mapped to 'odkSurvey' in the Javascript
@@ -204,10 +205,9 @@ public class OdkSurveyIf {
   @JavascriptInterface
   public void syncSelectedForms(String ids) {
     Gson g = new Gson();
-    Type listType = new TypeToken<ArrayList<String>>() {
-    }.getType();
-    ArrayList<String> list = g.fromJson(ids, listType);
-    if (list.isEmpty()) {
+    Type listToSyncType = new TypeToken<Map<String, ArrayList<String>>>() {}.getType();
+    Map<String, ArrayList<String>> listToSync = g.fromJson(ids, listToSyncType);
+    if (listToSync.isEmpty()) {
       Toast.makeText(mContext, R.string.no_forms_selected_for_sync, Toast.LENGTH_SHORT).show();
     } else {
       Intent syncIntent = new Intent();
@@ -217,7 +217,10 @@ public class OdkSurveyIf {
       syncIntent.setAction(Intent.ACTION_DEFAULT);
       Bundle bundle = new Bundle();
       bundle.putString(IntentConsts.INTENT_KEY_APP_NAME, ODKFileUtils.getOdkDefaultAppName());
-      syncIntent.putStringArrayListExtra("ids", list);
+      syncIntent.putExtras(bundle);
+      for (Map.Entry<String, ArrayList<String>> entry : listToSync.entrySet()) {
+        bundle.putSerializable(entry.getKey(), entry.getValue());
+      }
       syncIntent.putExtras(bundle);
       mContext.startActivity(syncIntent);
     }
